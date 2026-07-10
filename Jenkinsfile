@@ -74,20 +74,37 @@ pipeline {
             }
         }
 
-        stage('Deploy to Amazon EKS') {
-            steps {
+//        stage('Deploy to Amazon EKS') {
+//            steps {
 
-                sh '''
-                sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_URI}|g" k8s/deployment.yaml
+//               sh '''
+//               sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_URI}|g" k8s/deployment.yaml
+//
+//                kubectl apply -f k8s/deployment.yaml
+//
+//                kubectl apply -f k8s/service.yaml
+//                '''
+//            }
+//        }
 
-                kubectl apply -f k8s/deployment.yaml
+	stage('Deploy to Amazon EKS') {
+    		steps {
+        		withCredentials([[
+            			$class: 'AmazonWebServicesCredentialsBinding',
+            			credentialsId: 'aws-credentials'
+       			]]) {
 
-                kubectl apply -f k8s/service.yaml
-                '''
-            }
-        }
+            			sh '''
+            			sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_URI}|g" k8s/deployment.yaml
 
-        stage('Verify Rollout') {
+            			kubectl apply -f k8s/deployment.yaml
+            			kubectl apply -f k8s/service.yaml
+            			'''
+        		}
+    		}
+	}
+        
+	stage('Verify Rollout') {
             steps {
 
                 sh '''
