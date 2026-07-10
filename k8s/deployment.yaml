@@ -20,7 +20,7 @@ spec:
       containers:
       - name: nodejs-app
 
-        image: <ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/nodejs-demo:v1
+        image: IMAGE_PLACEHOLDER
 
         imagePullPolicy: Always
 
