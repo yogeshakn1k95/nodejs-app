@@ -104,17 +104,36 @@ pipeline {
     		}
 	}
         
+//	stage('Verify Rollout') {
+//            steps {
+//
+//                sh '''
+//                kubectl rollout status deployment/nodejs-app
+//
+//                kubectl get pods
+//
+//                kubectl get svc
+//                '''
+//            }
+//        }
+  
 	stage('Verify Rollout') {
-            steps {
+    		steps {
+        		withCredentials([[
+            			$class: 'AmazonWebServicesCredentialsBinding',
+            			credentialsId: 'aws-credentials'
+       		 ]]) {
 
-                sh '''
-                kubectl rollout status deployment/nodejs-app
+            	sh '''
+            	kubectl rollout status deployment/nodejs-app
 
-                kubectl get pods
+            	kubectl get pods
 
-                kubectl get svc
-                '''
-            }
+            	kubectl get svc
+            	'''
         }
     }
+}
+
+  }
 }
